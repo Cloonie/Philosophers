@@ -38,8 +38,8 @@ int	ft_isdigit(char *arg)
 	int	i;
 
 	i = 0;
-	while (arg[++i])
-		if (arg[i] >= '0' && arg[i] <= '9')
+	while (arg[i])
+		if (arg[i] >= '0' && arg[i++] <= '9')
 			return (1);
 	return (0);
 }

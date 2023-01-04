@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:36:39 by mliew             #+#    #+#             */
-/*   Updated: 2023/01/03 20:49:17 by mliew            ###   ########.fr       */
+/*   Updated: 2023/01/04 22:59:03 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,12 @@ int	check_arg(int ac, char **av)
 	i = 0;
 	if (ac < 5 || ac > 6)
 		return (printf("ac wrong\n"));
-	if (++i < ac)
+	while (++i < ac)
 	{
 		if (ft_isdigit(av[i]))
 			return (printf("digit wrong\n"));
-		if (ft_atoi(av[i]) < 1)
-			return (printf("atoi wrong\n"));
+		// if (ft_atoi(av[i]) < 1)
+		// 	return (printf("atoi wrong\n"));
 	}
 	return (0);
 }
