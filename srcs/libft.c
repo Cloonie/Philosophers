@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-long	ft_atoi(const char *str)
+long	ft_atol(const char *str)
 {
 	int		i;
 	int		neg;
@@ -26,20 +26,20 @@ long	ft_atoi(const char *str)
 		i++;
 	if (str[i] == '-')
 		neg *= -1;
-	if (str[i] == '+' || str[i] == '-')
+	if (str[i] == '-')
 		i++;
 	while (str[i] >= '0' && str[i] <= '9')
 		nbr = (nbr * 10) + (str[i++] - '0');
 	return (nbr * neg);
 }
 
-int	ft_isdigit(char *arg)
+int	ft_strisdigit(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (arg[i])
-		if (arg[i] >= '0' && arg[i++] <= '9')
+	while (str[i])
+		if (str[i] >= '0' && str[i++] <= '9')
 			return (1);
 	return (0);
 }

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+         #
+#    By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/29 17:05:11 by mliew             #+#    #+#              #
-#    Updated: 2023/01/03 21:50:32 by mliew            ###   ########.fr        #
+#    Updated: 2023/01/05 20:36:59 by mliew            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,15 +19,17 @@ CFLAGS		=	-Wall -Wextra -Werror
 
 FILES		=	philo	\
 				libft	\
+				check	\
 
 SRCS		=	$(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS		=	$(addprefix $(OBJS_DIR), $(addsuffix .o, $(FILES)))
 SRCS_DIR	=	srcs/
 OBJS_DIR	=	objs/
 
-all:
+all: $(OBJS_DIR) $(NAME)
+
+$(OBJS_DIR):
 	mkdir -p $(OBJS_DIR)
-	make $(NAME)
 
 $(OBJS_DIR)%.o : $(SRCS_DIR)%.c
 	$(CC) $(CFLAGS) -c $< -o $@
