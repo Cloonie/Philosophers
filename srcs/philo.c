@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
+/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:36:39 by mliew             #+#    #+#             */
-/*   Updated: 2023/01/05 23:28:17 by mliew            ###   ########.fr       */
+/*   Updated: 2023/01/07 00:37:58 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,14 @@ void	init_philo(t_table *table)
 	while (++i < table->num_of_philo)
 	{
 		table->philo[i].number = i + 1;
-		table->philo[i].left_fork = table->fork[i];
-		table->philo[i].right_fork = 0;
 		table->philo[i].eat_count = 0;
+		table->philo[i].left_fork = &table->fork[i];
+		if (i + 1 != table->num_of_philo)
+			table->philo[i].right_fork = &table->fork[i + 1];
+		else if (table->num_of_philo != 1)
+			table->philo[i].right_fork = &table->fork[0];
+		else
+			table->philo[i].right_fork = NULL;
 	}
 }
 
@@ -68,6 +73,7 @@ int	main(int ac, char **av)
 	if (check_arg(ac, av))
 		error();
 	table = init_table(ac, av);
+	(void)table;
 
 	pthread_mutex_t	mutex;
 	pthread_mutex_init(&mutex, NULL);
