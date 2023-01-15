@@ -3,19 +3,54 @@
 /*                                                        :::      ::::::::   */
 /*   check.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
+/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 18:51:42 by mliew             #+#    #+#             */
-/*   Updated: 2023/01/05 20:36:47 by mliew            ###   ########.fr       */
+/*   Updated: 2023/01/10 15:33:14 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	error(void)
+void	free_error(t_table *table)
 {
+	free(table->fork);
+	free(table->philo);
+	free(table);
 	printf("Error\n");
 	exit(0);
+}
+
+long	ft_atol(const char *str)
+{
+	int		i;
+	int		neg;
+	long	nbr;
+
+	i = 0;
+	neg = 1;
+	nbr = 0;
+	while (str[i] && (str[i] == '\t' || str[i] == '\n' || str[i] == '\v'
+			|| str[i] == '\f' || str[i] == '\r' || str[i] == ' '))
+		i++;
+	if (str[i] == '-')
+		neg *= -1;
+	if (str[i] == '-')
+		i++;
+	while (str[i] >= '0' && str[i] <= '9')
+		nbr = (nbr * 10) + (str[i++] - '0');
+	return (nbr * neg);
+}
+
+int	ft_strisdigit(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		if (str[i] >= '0' && str[i++] <= '9')
+			return (1);
+	return (0);
 }
 
 int	check_arg(int ac, char **av)

@@ -12,34 +12,23 @@
 
 #include "philo.h"
 
-long	ft_atol(const char *str)
+long	get_time(void)
 {
-	int		i;
-	int		neg;
-	long	nbr;
+	struct timeval	tv;
 
-	i = 0;
-	neg = 1;
-	nbr = 0;
-	while (str[i] && (str[i] == '\t' || str[i] == '\n' || str[i] == '\v'
-			|| str[i] == '\f' || str[i] == '\r' || str[i] == ' '))
-		i++;
-	if (str[i] == '-')
-		neg *= -1;
-	if (str[i] == '-')
-		i++;
-	while (str[i] >= '0' && str[i] <= '9')
-		nbr = (nbr * 10) + (str[i++] - '0');
-	return (nbr * neg);
+	gettimeofday(&tv, NULL);
+	// printf("sec:%ld\n", tv.tv_sec);
+	// printf("usec:%ld\n", tv.tv_usec);
+	// printf("since 1/1/1970:%ld\n", (tv.tv_sec * 1000000) + tv.tv_usec);
+
+	// struct tm *info;
+	// info = localtime(&tv.tv_sec);
+	// printf("%s", asctime(info));
+
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-int	ft_strisdigit(char *str)
+long	current_time(t_table *table)
 {
-	int	i;
-
-	i = 0;
-	while (str[i])
-		if (str[i] >= '0' && str[i++] <= '9')
-			return (1);
-	return (0);
+	return (get_time() - table->start_time);
 }

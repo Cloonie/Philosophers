@@ -3,23 +3,24 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+         #
+#    By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/29 17:05:11 by mliew             #+#    #+#              #
-#    Updated: 2023/01/05 20:36:59 by mliew            ###   ########.fr        #
+#    Updated: 2023/01/11 16:29:09 by mliew            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		=	philo
 CC			=	gcc
 RM			=	rm -rf
-CFLAGS		=	-Wall -Wextra -Werror
+CFLAGS		=	-Wall -Wextra -Werror -pthread
 # CFLAGS		+=	-pthread
 # CFLAGS		+=	-g -fsanitize=thread
 
 FILES		=	philo	\
-				libft	\
+				init	\
 				check	\
+				utils	\
 
 SRCS		=	$(addprefix $(SRCS_DIR), $(addsuffix .c, $(FILES)))
 OBJS		=	$(addprefix $(OBJS_DIR), $(addsuffix .o, $(FILES)))
