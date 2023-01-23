@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:37:40 by mliew             #+#    #+#             */
-/*   Updated: 2023/01/11 16:31:36 by mliew            ###   ########.fr       */
+/*   Updated: 2023/01/23 14:44:26 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,18 @@
 typedef struct s_fork
 {
 	pthread_mutex_t	mutex;
-	int				availability;
+	int				usage;
 }	t_fork;
 
 typedef struct s_philo
 {
-	int			id;
-	pthread_t	thread;
-	t_fork		*left_fork;
-	t_fork		*right_fork;
-	int			eat_count;
+	int				id;
+	pthread_t		thread;
+	t_fork			*left_fork;
+	t_fork			*right_fork;
+	int				eat_count;
+	int				latest_meal;
+	struct s_table	*table;
 }	t_philo;
 
 typedef struct s_table
