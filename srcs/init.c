@@ -40,6 +40,7 @@ void	init_philo(t_table *table)
 		table->philo[i].id = i + 1;
 		table->philo[i].eat_count = 0;
 		table->philo[i].latest_meal = 0;
+		table->philo[i].status = 0;
 		table->philo[i].left_fork = &table->fork[i];
 		if (i + 1 != table->num_of_philo)
 			table->philo[i].right_fork = &table->fork[i + 1];

@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:37:40 by mliew             #+#    #+#             */
-/*   Updated: 2023/01/23 14:44:26 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/06 13:19:00 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <pthread.h>
+
+# define THINKING 0
+# define EATING 1
+# define SLEEPING 2
 
 typedef struct s_fork
 {
@@ -33,6 +37,7 @@ typedef struct s_philo
 	t_fork			*right_fork;
 	int				eat_count;
 	int				latest_meal;
+	int				status;
 	struct s_table	*table;
 }	t_philo;
 
