@@ -6,18 +6,27 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:36:39 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/06 13:52:07 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/08 00:15:54 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+void	check_death(t_philo *philo)
+{
+	if (current_time(philo->table)
+		>= (philo->latest_meal + philo->table->time_to_die))
+	{
+		printf("%ld %d died\n", current_time(philo->table), philo->id);
+		exit(0);
+	}
+}
+
 void	take_fork(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
-		usleep(1000);
+		usleep(500);
 	usleep(philo->id * 100);
-	printf("%ld %d is thinking\n", current_time(philo->table), philo->id);
 	pthread_mutex_lock(&philo->left_fork->mutex);
 	printf("%ld %d has taken a fork\n", current_time(philo->table), philo->id);
 	pthread_mutex_lock(&philo->right_fork->mutex);
@@ -27,16 +36,10 @@ void	take_fork(t_philo *philo)
 
 void	eating(t_philo *philo)
 {
-	if (current_time(philo->table)
-		> (philo->latest_meal + philo->table->time_to_die))
-	{
-		printf("%ld %d died\n", current_time(philo->table), philo->id);
-		exit(0);
-	}
 	printf("%ld %d is eating\n", current_time(philo->table), philo->id);
-	usleep(philo->table->time_to_eat * 1000);
 	philo->latest_meal = current_time(philo->table);
 	philo->eat_count += 1;
+	usleep(philo->table->time_to_eat * 1000);
 	philo->status = SLEEPING;
 }
 
@@ -47,6 +50,7 @@ void	sleeping(t_philo *philo)
 	pthread_mutex_unlock(&philo->right_fork->mutex);
 	usleep(philo->table->time_to_sleep * 1000);
 	philo->status = THINKING;
+	printf("%ld %d is thinking\n", current_time(philo->table), philo->id);
 }
 
 void	*routine(void *arg)
@@ -56,12 +60,15 @@ void	*routine(void *arg)
 	philo = arg;
 	while (1)
 	{
+		pthread_mutex_lock(&philo->mutex);
 		if (philo->status == THINKING)
 			take_fork(philo);
+		check_death(philo);
 		if (philo->status == EATING)
 			eating(philo);
 		if (philo->status == SLEEPING)
 			sleeping(philo);
+		pthread_mutex_unlock(&philo->mutex);
 	}
 	return (NULL);
 }

@@ -37,6 +37,7 @@ void	init_philo(t_table *table)
 	i = -1;
 	while (++i < table->num_of_philo)
 	{
+		pthread_mutex_init(&table->philo[i].mutex, NULL);
 		table->philo[i].id = i + 1;
 		table->philo[i].eat_count = 0;
 		table->philo[i].latest_meal = 0;
