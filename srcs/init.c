@@ -37,10 +37,11 @@ void	init_philo(t_table *table)
 	i = -1;
 	while (++i < table->num_of_philo)
 	{
-		pthread_mutex_init(&table->mutex, NULL);
 		table->philo[i].id = i + 1;
 		table->philo[i].eat_count = 0;
 		table->philo[i].latest_meal = 0;
+		pthread_mutex_init(&table->philo->mutex_eat_count, NULL);
+		pthread_mutex_init(&table->philo->mutex_latest_meal, NULL);
 		table->philo[i].status = 0;
 		table->philo[i].left_fork = &table->fork[i];
 		if (i + 1 != table->num_of_philo)
