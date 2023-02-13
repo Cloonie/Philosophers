@@ -20,19 +20,21 @@ void	smart_usleep(t_philo *philo, int num)
 	while (current_time(philo->table) < time + num)
 	{
 		usleep(500);
+		pthread_mutex_lock(&philo->table->mutex_death);
 		if (current_time(philo->table)
 			>= (philo->latest_meal + philo->table->time_to_die))
 		{
 			printf("%ld %d died\n", current_time(philo->table), philo->id);
 			exit(0);
 		}
+		pthread_mutex_unlock(&philo->table->mutex_death);
 	}
 }
 
 void	take_fork(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
-		usleep(500);
+		smart_usleep(philo, 5);
 	pthread_mutex_lock(&philo->left_fork->mutex);
 	philo->left_fork->usage = philo->id;
 	printf("%ld %d has taken a fork\n",
@@ -93,12 +95,12 @@ void	*routine(void *arg)
 		take_fork(philo);
 		eating(philo);
 		sleeping2thinking(philo);
-		// int i;
-		// i = -1;
-		// while (++i < philo->table->num_of_philo)
-		// {
-		// 	printf("%d %d %d\n", philo[i].id, philo[i].eat_count, philo->table->times_eaten);
-		// }
+		int i;
+		i = -1;
+		while (++i < philo->table->num_of_philo)
+		{
+			printf("%d %d %d\n", philo[i].id, philo[i].eat_count, philo->table->times_eaten);
+		}
 	}
 	return (NULL);
 }

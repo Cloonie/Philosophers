@@ -64,6 +64,7 @@ t_table	*init_table(int ac, char **av)
 	table->time_to_sleep = atoi(av[4]);
 	if (ac == 6)
 		table->times_eaten = atoi(av[5]);
+	pthread_mutex_init(&table->mutex_death, NULL);
 	init_fork(table);
 	init_philo(table);
 	return (table);

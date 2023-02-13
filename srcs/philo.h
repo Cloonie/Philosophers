@@ -54,7 +54,7 @@ typedef struct s_table
 	t_philo			*philo;
 	t_fork			*fork;
 	pthread_mutex_t	mutex_message;
-	pthread_mutex_t	mutex_status;
+	pthread_mutex_t	mutex_death;
 }	t_table;
 
 // check
