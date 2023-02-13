@@ -25,7 +25,7 @@ void	smart_usleep(t_philo *philo, int num)
 			>= (philo->latest_meal + philo->table->time_to_die))
 		{
 			printf("%ld %d died\n", current_time(philo->table), philo->id);
-			exit(0);
+			free_error(philo->table);
 		}
 		pthread_mutex_unlock(&philo->table->mutex_death);
 	}
@@ -42,7 +42,7 @@ void	check_eat_count(t_philo *philo)
 		{
 			i++;
 			if (i == philo->table->num_of_philo - 1)
-				exit(0);
+				free_error(philo->table);
 		}
 		i = 0;
 		break ;

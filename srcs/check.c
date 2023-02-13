@@ -14,10 +14,11 @@
 
 void	free_error(t_table *table)
 {
-	free(table->fork);
-	free(table->philo);
-	free(table);
-	printf("Error\n");
+	(void)table;
+	// free(table->fork);
+	// free(table->philo);
+	// free(table);
+	system("leaks philo");
 	exit(0);
 }
 
@@ -59,13 +60,13 @@ int	check_arg(int ac, char **av)
 
 	i = 0;
 	if (ac < 5 || ac > 6)
-		return (printf("ac wrong\n"));
+		return (printf("Only 4 or 5 arguments.\n"));
 	while (++i < ac)
 	{
 		if (ft_atol(av[i]) < 1 || ft_atol(av[i]) > 2147483647)
-			return (printf("ft_atol wrong\n"));
+			return (printf("Numbers cannot be more than max int.\n"));
 		if (!ft_strisdigit(av[i]))
-			return (printf("ft_isdigit wrong\n"));
+			return (printf("Numbers cannot be less than 0.\n"));
 	}
 	return (0);
 }
