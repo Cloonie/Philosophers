@@ -67,9 +67,13 @@ int		ft_strisdigit(char *str);
 void	init_fork(t_table *table);
 void	init_philo(t_table *table);
 t_table	*init_table(int ac, char **av);
-
-// utils
 long	get_time(void);
 long	current_time(t_table *table);
+
+// utils
+void	smart_usleep(t_philo *philo, int num);
+void	check_eat_count(t_philo *philo);
+void	take_fork(t_philo *philo);
+void	eating(t_philo *philo);
 
 #endif
