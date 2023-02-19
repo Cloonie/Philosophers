@@ -12,28 +12,29 @@
 
 #include "philo.h"
 
-void	init_fork(t_table *table)
+int	init_fork(t_table *table)
 {
 	int	i;
 
 	table->fork = malloc(table->num_of_philo * (sizeof(t_fork)));
 	if (table->fork == NULL)
-		free_error(table);
+		return (1);
 	i = -1;
 	while (++i < table->num_of_philo)
 	{
 		pthread_mutex_init(&table->fork[i].mutex, NULL);
 		table->fork[i].usage = 0;
 	}
+	return (0);
 }
 
-void	init_philo(t_table *table)
+int	init_philo(t_table *table)
 {
 	int	i;
 
 	table->philo = malloc(table->num_of_philo * sizeof(t_philo));
 	if (table->philo == NULL)
-		free_error(table);
+		return (1);
 	i = -1;
 	while (++i < table->num_of_philo)
 	{
@@ -51,6 +52,7 @@ void	init_philo(t_table *table)
 		else
 			table->philo[i].right_fork = NULL;
 	}
+	return (0);
 }
 
 t_table	*init_table(int ac, char **av)
@@ -65,6 +67,7 @@ t_table	*init_table(int ac, char **av)
 	if (ac == 6)
 		table->times_eaten = atoi(av[5]);
 	pthread_mutex_init(&table->mutex_death, NULL);
+	pthread_mutex_init(&table->mutex_print, NULL);
 	init_fork(table);
 	init_philo(table);
 	return (table);

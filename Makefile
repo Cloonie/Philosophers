@@ -6,7 +6,7 @@
 #    By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/29 17:05:11 by mliew             #+#    #+#              #
-#    Updated: 2023/01/11 16:29:09 by mliew            ###   ########.fr        #
+#    Updated: 2023/02/20 02:04:54 by mliew            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ CC			=	gcc
 RM			=	rm -rf
 CFLAGS		=	-Wall -Wextra -Werror
 CFLAGS		+=	-pthread
-# CFLAGS		+=	-g -fsanitize=thread
+CFLAGS		+=	-g -fsanitize=thread
 
 FILES		=	philo	\
 				init	\

@@ -6,26 +6,36 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:36:39 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/12 15:04:53 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/20 02:07:28 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+int	check_status(t_table *table)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->num_of_philo)
+	{
+		if (table->philo[i].status == 1)
+			return (0);
+	}
+	return (1);
+}
 
 void	*routine(void *arg)
 {
 	t_philo	*philo;
 
 	philo = arg;
-	while (1)
+	while (check_status(philo->table))
 	{
-		take_fork(philo);
-		eating(philo);
-		printf("%ld %d is sleeping\n", current_time(philo->table), philo->id);
-		smart_usleep(philo, philo->table->time_to_sleep);
-		printf("%ld %d is thinking\n", current_time(philo->table), philo->id);
-		while (philo->left_fork->usage)
-			smart_usleep(philo, 1);
+		if (take_fork(philo))
+			break ;
+		if (eating(philo))
+			break ;
 	}
 	return (NULL);
 }
@@ -42,6 +52,12 @@ void	run_thread(t_table *table)
 		pthread_create(&table->philo[i].thread, NULL, &routine,
 			&table->philo[i]);
 	}
+}
+
+void	join_thread(t_table *table)
+{
+	int	i;
+
 	i = -1;
 	while (++i < table->num_of_philo)
 		pthread_join(table->philo[i].thread, NULL);
@@ -55,4 +71,9 @@ int	main(int ac, char **av)
 		exit(0);
 	table = init_table(ac, av);
 	run_thread(table);
+	while (check_status(table))
+		usleep(1);
+	join_thread(table);
+	philo_free(table);
+	// system("leaks philo");
 }

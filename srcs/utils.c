@@ -12,9 +12,32 @@
 
 #include "philo.h"
 
-void	smart_usleep(t_philo *philo, int num)
+void	printing(t_philo *philo, char *state)
 {
-	int	time;
+	pthread_mutex_lock(&philo->table->mutex_print);
+	if (check_status(philo->table))
+		printf("%ld %d %s\n", current_time(philo->table), philo->id, state);
+	pthread_mutex_unlock(&philo->table->mutex_print);
+}
+
+int	check_eat_count(t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo->table->num_of_philo && philo->table->times_eaten != 0
+		&& philo->table->philo[i].eat_count == philo->table->times_eaten)
+	{
+		if (i == philo->table->num_of_philo - 1)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	smart_usleep(t_philo *philo, int num)
+{
+	long	time;
 
 	time = current_time(philo->table);
 	while (current_time(philo->table) < time + num)
@@ -24,63 +47,76 @@ void	smart_usleep(t_philo *philo, int num)
 		if (current_time(philo->table)
 			>= (philo->latest_meal + philo->table->time_to_die))
 		{
-			printf("%ld %d died\n", current_time(philo->table), philo->id);
-			free_error(philo->table);
+			printing(philo, "died");
+			philo->status = 1;
 		}
+		if (check_eat_count(philo))
+			philo->status = 1;
 		pthread_mutex_unlock(&philo->table->mutex_death);
 	}
+	if (philo->status == 1)
+		return (1);
+	return (0);
 }
 
-void	check_eat_count(t_philo *philo)
-{
-	int	i;
-
-	i = 0;
-	while (i < philo->table->num_of_philo && philo->table->times_eaten)
-	{
-		while (philo->table->philo[i].eat_count == philo->table->times_eaten)
-		{
-			i++;
-			if (i == philo->table->num_of_philo - 1)
-				free_error(philo->table);
-		}
-		i = 0;
-		break ;
-	}
-}
-
-void	take_fork(t_philo *philo)
+int	take_fork(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
 	{
-		smart_usleep(philo, 1);
-		printf("%ld %d is thinking\n", current_time(philo->table), philo->id);
+		if (smart_usleep(philo, 1))
+			return (1);
+		printing(philo, "is thinking");
 	}
-	pthread_mutex_lock(&philo->left_fork->mutex);
-	philo->left_fork->usage = philo->id;
-	printf("%ld %d has taken a fork\n",
-		current_time(philo->table), philo->id);
-	while (philo->table->num_of_philo == 1)
-		smart_usleep(philo, 1);
-	pthread_mutex_lock(&philo->right_fork->mutex);
-	philo->right_fork->usage = philo->id;
-	printf("%ld %d has taken a fork\n",
-		current_time(philo->table), philo->id);
+	if (philo->left_fork)
+	{
+		pthread_mutex_lock(&philo->left_fork->mutex);
+		philo->left_fork->usage = philo->id;
+		printing(philo, "has taken a fork");
+	}
+	if (philo->right_fork)
+	{
+		pthread_mutex_lock(&philo->right_fork->mutex);
+		philo->right_fork->usage = philo->id;
+		printing(philo, "has taken a fork");
+	}
+	return (0);
 }
 
-void	eating(t_philo *philo)
+int	eating(t_philo *philo)
 {
-	printf("%ld %d is eating\n", current_time(philo->table), philo->id);
-	pthread_mutex_lock(&philo->mutex_latest_meal);
-	philo->latest_meal = current_time(philo->table);
-	pthread_mutex_unlock(&philo->mutex_latest_meal);
-	smart_usleep(philo, philo->table->time_to_eat);
-	pthread_mutex_lock(&philo->mutex_eat_count);
-	philo->eat_count += 1;
-	check_eat_count(philo);
-	pthread_mutex_unlock(&philo->mutex_eat_count);
-	pthread_mutex_unlock(&philo->left_fork->mutex);
-	philo->left_fork->usage = 0;
-	pthread_mutex_unlock(&philo->right_fork->mutex);
-	philo->right_fork->usage = 0;
+	if (philo->left_fork->usage == philo->id
+		&& philo->right_fork != NULL)
+	{
+		pthread_mutex_lock(&philo->mutex_latest_meal);
+		philo->latest_meal = current_time(philo->table);
+		pthread_mutex_unlock(&philo->mutex_latest_meal);
+
+		printing(philo, "is eating");
+		if (smart_usleep(philo, philo->table->time_to_eat))
+			return (1);
+
+		pthread_mutex_lock(&philo->mutex_eat_count);
+		philo->eat_count += 1;
+		pthread_mutex_unlock(&philo->mutex_eat_count);
+		if (smart_usleep(philo, 1))
+			return (1);
+
+		pthread_mutex_unlock(&philo->left_fork->mutex);
+		philo->left_fork->usage = 0;
+		pthread_mutex_unlock(&philo->right_fork->mutex);
+		philo->right_fork->usage = 0;
+
+		if (check_status(philo->table))
+		{
+			printing(philo, "is sleeping");
+			if (smart_usleep(philo, philo->table->time_to_sleep))
+				return (1);
+
+			printing(philo, "is thinking");
+		}
+	}
+	while (philo->left_fork->usage != 0)
+		if (smart_usleep(philo, 1))
+			return (1);
+	return (0);
 }

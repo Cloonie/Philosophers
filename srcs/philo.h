@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:37:40 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/09 14:19:30 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/20 01:09:42 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,27 +53,29 @@ typedef struct s_table
 	long			start_time;
 	t_philo			*philo;
 	t_fork			*fork;
-	pthread_mutex_t	mutex_message;
 	pthread_mutex_t	mutex_death;
+	pthread_mutex_t	mutex_print;
 }	t_table;
 
 // check
-void	free_error(t_table *table);
+void	philo_free(t_table *table);
 int		check_arg(int ac, char **av);
 long	ft_atol(const char *str);
 int		ft_strisdigit(char *str);
 
 // init
-void	init_fork(t_table *table);
-void	init_philo(t_table *table);
+int		init_fork(t_table *table);
+int		init_philo(t_table *table);
 t_table	*init_table(int ac, char **av);
 long	get_time(void);
 long	current_time(t_table *table);
 
 // utils
-void	smart_usleep(t_philo *philo, int num);
-void	check_eat_count(t_philo *philo);
-void	take_fork(t_philo *philo);
-void	eating(t_philo *philo);
+void	printing(t_philo *philo, char *state);
+int		smart_usleep(t_philo *philo, int num);
+int		check_eat_count(t_philo *philo);
+int		take_fork(t_philo *philo);
+int		eating(t_philo *philo);
 
+int		check_status(t_table *table);
 #endif

@@ -6,20 +6,30 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 18:51:42 by mliew             #+#    #+#             */
-/*   Updated: 2023/01/10 15:33:14 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/19 02:13:30 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	free_error(t_table *table)
+void	philo_free(t_table *table)
 {
-	(void)table;
-	// free(table->fork);
-	// free(table->philo);
-	// free(table);
-	system("leaks philo");
-	exit(0);
+	int	i;
+
+	i = -1;
+	while (++i < table->num_of_philo)
+		pthread_mutex_destroy(&table->fork[i].mutex);
+	i = -1;
+	while (++i < table->num_of_philo)
+	{
+		pthread_mutex_destroy(&table->philo[i].mutex_eat_count);
+		pthread_mutex_destroy(&table->philo[i].mutex_latest_meal);
+	}
+	free(table->fork);
+	free(table->philo);
+	pthread_mutex_destroy(&table->mutex_print);
+	pthread_mutex_destroy(&table->mutex_death);
+	free(table);
 }
 
 long	ft_atol(const char *str)
