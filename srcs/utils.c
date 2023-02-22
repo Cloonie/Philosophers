@@ -12,12 +12,17 @@
 
 #include "philo.h"
 
-void	printing(t_philo *philo, char *state)
+int	printing(t_philo *philo, char *state)
 {
 	pthread_mutex_lock(&philo->table->mutex_print);
-	if (check_status(philo->table))
-		printf("%ld %d %s\n", current_time(philo->table), philo->id, state);
+	if (check_status(philo->table) == 0)
+	{
+		pthread_mutex_unlock(&philo->table->mutex_print);
+		return (1);
+	}
+	printf("%ld %d %s\n", current_time(philo->table), philo->id, state);
 	pthread_mutex_unlock(&philo->table->mutex_print);
+	return (0);
 }
 
 int	check_eat_count(t_philo *philo)
@@ -28,7 +33,7 @@ int	check_eat_count(t_philo *philo)
 	while (i < philo->table->num_of_philo && philo->table->times_eaten != 0
 		&& philo->table->philo[i].eat_count == philo->table->times_eaten)
 	{
-		if (i == philo->table->num_of_philo - 1)
+		if (i + 1 == philo->table->num_of_philo)
 			return (1);
 		i++;
 	}
@@ -51,72 +56,66 @@ int	smart_usleep(t_philo *philo, int num)
 			philo->status = 1;
 		}
 		if (check_eat_count(philo))
+		{
 			philo->status = 1;
+		}
 		pthread_mutex_unlock(&philo->table->mutex_death);
 	}
 	if (philo->status == 1)
+	{
 		return (1);
+	}
 	return (0);
 }
 
-int	take_fork(t_philo *philo)
+int	take_fork(t_philo *philo, t_fork *fork)
 {
-	if (philo->id % 2 == 0)
+	int	used;
+
+	used = 0;
+	if (fork == NULL)
+		return (1);
+	while (!used)
 	{
-		if (smart_usleep(philo, 1))
-			return (1);
-		printing(philo, "is thinking");
+		pthread_mutex_lock(&fork->mutex);
+		if (fork->usage == 0)
+		{
+			fork->usage = philo->id;
+			used = 1;
+		}
+		pthread_mutex_unlock(&fork->mutex);
+		if (!used)
+			usleep (500);
 	}
-	if (philo->left_fork)
-	{
-		pthread_mutex_lock(&philo->left_fork->mutex);
-		philo->left_fork->usage = philo->id;
-		printing(philo, "has taken a fork");
-	}
-	if (philo->right_fork)
-	{
-		pthread_mutex_lock(&philo->right_fork->mutex);
-		philo->right_fork->usage = philo->id;
-		printing(philo, "has taken a fork");
-	}
+	if (printing(philo, "has taken a fork"))
+		return (1);
 	return (0);
 }
 
 int	eating(t_philo *philo)
 {
 	if (philo->left_fork->usage == philo->id
-		&& philo->right_fork != NULL)
+		&& philo->right_fork->usage == philo->id)
 	{
 		pthread_mutex_lock(&philo->mutex_latest_meal);
 		philo->latest_meal = current_time(philo->table);
 		pthread_mutex_unlock(&philo->mutex_latest_meal);
 
-		printing(philo, "is eating");
+		if (printing(philo, "is eating"))
+			return (1);
 		if (smart_usleep(philo, philo->table->time_to_eat))
 			return (1);
 
 		pthread_mutex_lock(&philo->mutex_eat_count);
 		philo->eat_count += 1;
 		pthread_mutex_unlock(&philo->mutex_eat_count);
-		if (smart_usleep(philo, 1))
-			return (1);
 
-		pthread_mutex_unlock(&philo->left_fork->mutex);
+		pthread_mutex_lock(&philo->left_fork->mutex);
 		philo->left_fork->usage = 0;
-		pthread_mutex_unlock(&philo->right_fork->mutex);
+		pthread_mutex_unlock(&philo->left_fork->mutex);
+		pthread_mutex_lock(&philo->right_fork->mutex);
 		philo->right_fork->usage = 0;
-
-		if (check_status(philo->table))
-		{
-			printing(philo, "is sleeping");
-			if (smart_usleep(philo, philo->table->time_to_sleep))
-				return (1);
-
-			printing(philo, "is thinking");
-		}
+		pthread_mutex_unlock(&philo->right_fork->mutex);
 	}
-	while (philo->left_fork->usage != 0)
-		if (smart_usleep(philo, 1))
-			return (1);
 	return (0);
 }

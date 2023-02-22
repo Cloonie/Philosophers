@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:37:40 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/20 01:09:42 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/23 01:05:06 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,11 @@ long	get_time(void);
 long	current_time(t_table *table);
 
 // utils
-void	printing(t_philo *philo, char *state);
+int		printing(t_philo *philo, char *state);
 int		smart_usleep(t_philo *philo, int num);
 int		check_eat_count(t_philo *philo);
-int		take_fork(t_philo *philo);
+int	take_fork(t_philo *philo, t_fork *fork);
 int		eating(t_philo *philo);
-
+int		sleeping_thinking(t_philo *philo);
 int		check_status(t_table *table);
 #endif
