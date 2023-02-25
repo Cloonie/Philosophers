@@ -39,14 +39,10 @@ int	check_eat_count(t_philo *philo)
 			pthread_mutex_unlock(&philo->table->mutex_death);
 			return (1);
 		}
-		// pthread_mutex_lock(&philo[i].mutex_eat_count);
 		if (philo->table->philo[i].eat_count == philo->table->times_eaten)
 			i++;
 		else
-		{
-			// pthread_mutex_unlock(&philo[i].mutex_eat_count);
 			break ;
-		}
 	}
 	return (0);
 }
