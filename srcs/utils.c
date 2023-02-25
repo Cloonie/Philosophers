@@ -30,12 +30,23 @@ int	check_eat_count(t_philo *philo)
 	int	i;
 
 	i = 0;
-	while (i < philo->table->num_of_philo && philo->table->times_eaten != 0
-		&& philo->table->philo[i].eat_count == philo->table->times_eaten)
+	while (i < philo->table->num_of_philo && philo->table->times_eaten != 0)
 	{
 		if (i + 1 == philo->table->num_of_philo)
+		{
+			pthread_mutex_lock(&philo->table->mutex_death);
+			philo->status = 1;
+			pthread_mutex_unlock(&philo->table->mutex_death);
 			return (1);
-		i++;
+		}
+		// pthread_mutex_lock(&philo[i].mutex_eat_count);
+		if (philo->table->philo[i].eat_count == philo->table->times_eaten)
+			i++;
+		else
+		{
+			// pthread_mutex_unlock(&philo[i].mutex_eat_count);
+			break ;
+		}
 	}
 	return (0);
 }
@@ -48,22 +59,15 @@ int	smart_usleep(t_philo *philo, int num)
 	while (current_time(philo->table) < time + num)
 	{
 		usleep(500);
-		pthread_mutex_lock(&philo->table->mutex_death);
 		if (current_time(philo->table)
 			>= (philo->latest_meal + philo->table->time_to_die))
 		{
 			printing(philo, "died");
+			pthread_mutex_lock(&philo->table->mutex_death);
 			philo->status = 1;
+			pthread_mutex_unlock(&philo->table->mutex_death);
+			return (1);
 		}
-		if (check_eat_count(philo))
-		{
-			philo->status = 1;
-		}
-		pthread_mutex_unlock(&philo->table->mutex_death);
-	}
-	if (philo->status == 1)
-	{
-		return (1);
 	}
 	return (0);
 }
@@ -85,7 +89,7 @@ int	take_fork(t_philo *philo, t_fork *fork)
 		}
 		pthread_mutex_unlock(&fork->mutex);
 		if (!used)
-			usleep (500);
+			smart_usleep(philo, 1);
 	}
 	if (printing(philo, "has taken a fork"))
 		return (1);
@@ -100,16 +104,13 @@ int	eating(t_philo *philo)
 		pthread_mutex_lock(&philo->mutex_latest_meal);
 		philo->latest_meal = current_time(philo->table);
 		pthread_mutex_unlock(&philo->mutex_latest_meal);
-
 		if (printing(philo, "is eating"))
 			return (1);
-		if (smart_usleep(philo, philo->table->time_to_eat))
-			return (1);
-
-		pthread_mutex_lock(&philo->mutex_eat_count);
+		smart_usleep(philo, philo->table->time_to_eat);
+		pthread_mutex_lock(&philo->table->mutex_eat_count);
 		philo->eat_count += 1;
-		pthread_mutex_unlock(&philo->mutex_eat_count);
-
+		check_eat_count(philo);
+		pthread_mutex_unlock(&philo->table->mutex_eat_count);
 		pthread_mutex_lock(&philo->left_fork->mutex);
 		philo->left_fork->usage = 0;
 		pthread_mutex_unlock(&philo->left_fork->mutex);

@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:36:39 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/23 01:32:42 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/26 07:11:30 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,13 @@ int	check_status(t_table *table)
 	i = -1;
 	while (++i < table->num_of_philo)
 	{
+		pthread_mutex_lock(&table->mutex_death);
 		if (table->philo[i].status == 1)
+		{
+			pthread_mutex_unlock(&table->mutex_death);
 			return (0);
+		}
+		pthread_mutex_unlock(&table->mutex_death);
 	}
 	return (1);
 }
@@ -32,7 +37,8 @@ void	*routine(void *arg)
 	philo = arg;
 	while (check_status(philo->table))
 	{
-		printing(philo, "is thinking");
+		if (printing(philo, "is thinking"))
+			break ;
 		if (philo->id % 2 == 0)
 			smart_usleep(philo, 1);
 		if (take_fork(philo, philo->left_fork)
@@ -40,12 +46,8 @@ void	*routine(void *arg)
 			|| eating(philo))
 			break ;
 		if (printing(philo, "is sleeping")
-			|| smart_usleep(philo, philo->table->time_to_sleep)
-			|| printing(philo, "is thinking"))
+			|| smart_usleep(philo, philo->table->time_to_sleep))
 			break ;
-		while (philo->left_fork->usage != 0)
-			if (smart_usleep(philo, 1))
-				break ;
 	}
 	while (1)
 		if (smart_usleep(philo, 1))
@@ -87,6 +89,6 @@ int	main(int ac, char **av)
 	while (check_status(table))
 		usleep(1);
 	join_thread(table);
-	// philo_free(table);
-	// system("leaks philo");
+	philo_free(table);
+	system("leaks philo");
 }

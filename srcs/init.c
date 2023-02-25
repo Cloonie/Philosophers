@@ -41,7 +41,6 @@ int	init_philo(t_table *table)
 		table->philo[i].id = i + 1;
 		table->philo[i].eat_count = 0;
 		table->philo[i].latest_meal = 0;
-		pthread_mutex_init(&table->philo->mutex_eat_count, NULL);
 		pthread_mutex_init(&table->philo->mutex_latest_meal, NULL);
 		table->philo[i].status = 0;
 		table->philo[i].left_fork = &table->fork[i];
@@ -66,6 +65,7 @@ t_table	*init_table(int ac, char **av)
 	table->time_to_sleep = atoi(av[4]);
 	if (ac == 6)
 		table->times_eaten = atoi(av[5]);
+	pthread_mutex_init(&table->mutex_eat_count, NULL);
 	pthread_mutex_init(&table->mutex_death, NULL);
 	pthread_mutex_init(&table->mutex_print, NULL);
 	init_fork(table);

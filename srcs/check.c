@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 18:51:42 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/19 02:13:30 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/26 07:07:40 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@ void	philo_free(t_table *table)
 	i = -1;
 	while (++i < table->num_of_philo)
 	{
-		pthread_mutex_destroy(&table->philo[i].mutex_eat_count);
 		pthread_mutex_destroy(&table->philo[i].mutex_latest_meal);
 	}
 	free(table->fork);
 	free(table->philo);
+	pthread_mutex_destroy(&table->mutex_eat_count);
 	pthread_mutex_destroy(&table->mutex_print);
 	pthread_mutex_destroy(&table->mutex_death);
 	free(table);
@@ -70,13 +70,13 @@ int	check_arg(int ac, char **av)
 
 	i = 0;
 	if (ac < 5 || ac > 6)
-		return (printf("Only 4 or 5 arguments.\n"));
+		return (printf("Error, please input only 4 or 5 arguments.\n"));
 	while (++i < ac)
 	{
 		if (ft_atol(av[i]) < 1 || ft_atol(av[i]) > 2147483647)
-			return (printf("Numbers cannot be more than max int.\n"));
+			return (printf("Error, please input numbers 1 - 2147483647.\n"));
 		if (!ft_strisdigit(av[i]))
-			return (printf("Numbers cannot be less than 0.\n"));
+			return (printf("Error, please input numbers only.\n"));
 	}
 	return (0);
 }

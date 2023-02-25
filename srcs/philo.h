@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:37:40 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/23 01:05:06 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/26 07:06:34 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ typedef struct s_philo
 	int				latest_meal;
 	int				status;
 	pthread_mutex_t	mutex_latest_meal;
-	pthread_mutex_t	mutex_eat_count;
 	struct s_table	*table;
 }	t_philo;
 
@@ -53,6 +52,7 @@ typedef struct s_table
 	long			start_time;
 	t_philo			*philo;
 	t_fork			*fork;
+	pthread_mutex_t	mutex_eat_count;
 	pthread_mutex_t	mutex_death;
 	pthread_mutex_t	mutex_print;
 }	t_table;
@@ -74,7 +74,7 @@ long	current_time(t_table *table);
 int		printing(t_philo *philo, char *state);
 int		smart_usleep(t_philo *philo, int num);
 int		check_eat_count(t_philo *philo);
-int	take_fork(t_philo *philo, t_fork *fork);
+int		take_fork(t_philo *philo, t_fork *fork);
 int		eating(t_philo *philo);
 int		sleeping_thinking(t_philo *philo);
 int		check_status(t_table *table);
