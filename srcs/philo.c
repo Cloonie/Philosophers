@@ -6,7 +6,7 @@
 /*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:36:39 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/26 07:11:30 by mliew            ###   ########.fr       */
+/*   Updated: 2023/02/27 01:22:50 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,5 @@ int	main(int ac, char **av)
 		usleep(1);
 	join_thread(table);
 	philo_free(table);
-	system("leaks philo");
+	// system("leaks philo");
 }
