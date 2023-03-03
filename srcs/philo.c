@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mliew <mliew@student.42kl.edu.my>          +#+  +:+       +#+        */
+/*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:36:39 by mliew             #+#    #+#             */
-/*   Updated: 2023/02/27 01:22:50 by mliew            ###   ########.fr       */
+/*   Updated: 2023/03/03 14:06:47 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ void	*routine(void *arg)
 		if (printing(philo, "is thinking"))
 			break ;
 		if (philo->id % 2 == 0)
-			smart_usleep(philo, 1);
+			if (smart_usleep(philo, 1))
+				break ;
 		if (take_fork(philo, philo->left_fork)
 			|| take_fork(philo, philo->right_fork)
 			|| eating(philo))
@@ -49,9 +50,8 @@ void	*routine(void *arg)
 			|| smart_usleep(philo, philo->table->time_to_sleep))
 			break ;
 	}
-	while (1)
-		if (smart_usleep(philo, 1))
-			break ;
+	while ((!smart_usleep(philo, 1)))
+		break ;
 	return (NULL);
 }
 

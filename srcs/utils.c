@@ -18,6 +18,7 @@ int	printing(t_philo *philo, char *state)
 	if (check_status(philo->table) == 0)
 	{
 		pthread_mutex_unlock(&philo->table->mutex_print);
+		// printf("exit by printing\n");
 		return (1);
 	}
 	printf("%ld %d %s\n", current_time(philo->table), philo->id, state);
@@ -37,6 +38,7 @@ int	check_eat_count(t_philo *philo)
 			pthread_mutex_lock(&philo->table->mutex_death);
 			philo->status = 1;
 			pthread_mutex_unlock(&philo->table->mutex_death);
+			// printf("exit by eat count\n");
 			return (1);
 		}
 		if (philo->table->philo[i].eat_count == philo->table->times_eaten)
@@ -62,6 +64,7 @@ int	smart_usleep(t_philo *philo, int num)
 			pthread_mutex_lock(&philo->table->mutex_death);
 			philo->status = 1;
 			pthread_mutex_unlock(&philo->table->mutex_death);
+			// printf("exit by death\n");
 			return (1);
 		}
 	}
@@ -85,7 +88,8 @@ int	take_fork(t_philo *philo, t_fork *fork)
 		}
 		pthread_mutex_unlock(&fork->mutex);
 		if (!used)
-			smart_usleep(philo, 1);
+			if (smart_usleep(philo, 1))
+				return (1);
 	}
 	if (printing(philo, "has taken a fork"))
 		return (1);
@@ -102,7 +106,8 @@ int	eating(t_philo *philo)
 		pthread_mutex_unlock(&philo->mutex_latest_meal);
 		if (printing(philo, "is eating"))
 			return (1);
-		smart_usleep(philo, philo->table->time_to_eat);
+		if (smart_usleep(philo, philo->table->time_to_eat))
+			return (1);
 		pthread_mutex_lock(&philo->table->mutex_eat_count);
 		philo->eat_count += 1;
 		check_eat_count(philo);
