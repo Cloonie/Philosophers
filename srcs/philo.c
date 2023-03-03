@@ -6,7 +6,7 @@
 /*   By: mliew < mliew@student.42kl.edu.my>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/29 17:36:39 by mliew             #+#    #+#             */
-/*   Updated: 2023/03/03 14:51:36 by mliew            ###   ########.fr       */
+/*   Updated: 2023/03/03 15:14:08 by mliew            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ void	*routine(void *arg)
 			|| smart_usleep(philo, philo->table->time_to_sleep))
 			break ;
 	}
-	while ((!smart_usleep(philo, 1)))
-		break ;
+	while (1)
+		if (smart_usleep(philo, 1))
+			break ;
 	return (NULL);
 }
 

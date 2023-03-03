@@ -64,6 +64,9 @@ int	smart_usleep(t_philo *philo, int num)
 			pthread_mutex_unlock(&philo->table->mutex_death);
 			return (1);
 		}
+		pthread_mutex_lock(&philo->table->mutex_eat_count);
+		check_eat_count(philo);
+		pthread_mutex_unlock(&philo->table->mutex_eat_count);
 	}
 	return (0);
 }
